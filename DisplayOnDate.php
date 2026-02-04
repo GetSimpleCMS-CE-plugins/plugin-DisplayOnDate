@@ -21,7 +21,7 @@ register_plugin(
 	'risingisland',
 	'https://getsimple-ce.ovh/plugins/',
 	i18n_r($DisplayOnDate.'/lang_Description'),
-	'pages',
+	'block',
 	'displayon_admin'
 );
 
@@ -35,7 +35,7 @@ if (!file_exists(DISPLAYON_DATA)) {
 }
 
 # Add a link in the admin tab 'theme'
-add_action('pages-sidebar','createSideMenu',array($DisplayOnDate, i18n_r($DisplayOnDate.'/lang_Page_Title'). i18n_r($DisplayOnDate.'/lang_Icon')));
+add_action('nav-tab','createNavTab',array('block',$DisplayOnDate, i18n_r($DisplayOnDate.'/lang_Icon_Menu'). i18n_r($DisplayOnDate.'/lang_Tab_Title')));
 
 # =====================
 # CORE FUNCTIONS
@@ -88,6 +88,18 @@ function displayon_render($key) {
 	
 	// If no template, return content directly
 	return $content;
+}
+
+function display_footer() {
+	?>
+	<style>
+	.donateButton{box-shadow:inset 0px 1px 0px 0px #fce2c1;background:linear-gradient(to bottom, #ffc477 5%, #fb9e25 100%);background-color:#ffc477;border-radius:15px;border:1px solid #eeb44f;display:inline-block; cursor:pointer;color:#ffffff!important;font-family:Arial;font-size:15px;font-weight:bold;padding:5px 10px;text-decoration:none!important;text-shadow:0px 1px 0px #cc9f52}.donateButton:hover{background:linear-gradient(to bottom, #fb9e25 5%, #ffc477 100%);background-color:#fb9e25}.donateButton:active{position:relative;top:1px} hr{border:0;height:0;border-top:1px solid rgba(0, 0, 0, 0.1);border-bottom:1px solid rgba(255, 255, 255, 0.3)}
+	</style>
+	<footer id="paypal">
+		<p style="margin:20px 0 0">Made with <span class="credit-icon">❤️</span> especially for "<b><?php global $USR; echo $USR; ?></b>". Is this plugin useful to you?
+		<a href="https://getsimple-ce.ovh/donate" target="_blank" class="donateButton"><b>Buy Us A Coffee </b><svg xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-opacity="0" d="M17 14v4c0 1.66 -1.34 3 -3 3h-6c-1.66 0 -3 -1.34 -3 -3v-4Z"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.5s" values="0;1"/></path><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="48" stroke-dashoffset="48" d="M17 9v9c0 1.66 -1.34 3 -3 3h-6c-1.66 0 -3 -1.34 -3 -3v-9Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="48;0"/></path><path stroke-dasharray="14" stroke-dashoffset="14" d="M17 9h3c0.55 0 1 0.45 1 1v3c0 0.55 -0.45 1 -1 1h-3"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="14;0"/></path><mask id="lineMdCoffeeHalfEmptyFilledLoop0"><path stroke="#fff" d="M8 0c0 2-2 2-2 4s2 2 2 4-2 2-2 4 2 2 2 4M12 0c0 2-2 2-2 4s2 2 2 4-2 2-2 4 2 2 2 4M16 0c0 2-2 2-2 4s2 2 2 4-2 2-2 4 2 2 2 4"><animateMotion calcMode="linear" dur="3s" path="M0 0v-8" repeatCount="indefinite"/></path></mask><rect width="24" height="0" y="7" fill="currentColor" mask="url(#lineMdCoffeeHalfEmptyFilledLoop0)"><animate fill="freeze" attributeName="y" begin="0.8s" dur="0.6s" values="7;2"/><animate fill="freeze" attributeName="height" begin="0.8s" dur="0.6s" values="0;5"/></rect></g></svg></a></p>
+	</footer>
+	<?php
 }
 
 # =====================
@@ -181,6 +193,12 @@ function displayon_admin() {
 	
 	<!-- Add CSS -->
 	<style>
+		#sidebar {
+			display: none!important;
+		}
+		.bodycontent {
+			display: block;
+		}
 		.displayon-container {
 			background: #fff;
 			padding: 20px;
@@ -667,6 +685,9 @@ function displayon_admin() {
 			</form>
 		</div>
 		<?php
+		
+		display_footer();
+		
 		return;
 	}
 	
@@ -674,7 +695,7 @@ function displayon_admin() {
 	?>
 	<div class="displayon-container">
 		<div class="displayon-header">
-			<h3><?php echo i18n_r("DisplayOnDate/lang_Page_Title") . i18n_r("DisplayOnDate/lang_Icon");?> <br> <span style="color:#666;font-size:.65em;font-weight:400;"><?php echo i18n_r("DisplayOnDate/lang_Description");?></span></h3>
+			<h3><?php echo i18n_r("DisplayOnDate/lang_Icon") . i18n_r("DisplayOnDate/lang_Page_Title");?> <br> <span style="color:#666;font-size:.65em;font-weight:400;"><?php echo i18n_r("DisplayOnDate/lang_Description");?></span></h3>
 			<a href="load.php?id=DisplayOnDate&add" class="displayon-btn">+ <?php echo i18n_r("DisplayOnDate/lang_Add_New_Block");?></a>
 		</div>
 		
@@ -729,25 +750,55 @@ function displayon_admin() {
 		
 		<hr>
 		
-		<div class="displayon-usage">
-			<h4>📖 <?php echo i18n_r("DisplayOnDate/lang_Usage_Instructions");?></h4><br>
-			<p><strong><?php echo i18n_r("DisplayOnDate/lang_In_page");?>:</strong></p>
-			<pre class="cke">[display-on <span style="font-weight:600">your-block-key</span>]</pre>
-			<br>
-			<p><strong><?php echo i18n_r("DisplayOnDate/lang_In_templates");?>:</strong></p>
-			<pre class="tpl">&lt;?php display_on('<span style="font-weight:600">your-block-key</span>'); ?&gt;</pre>
-			<br>
-			<p><strong><?php echo i18n_r("DisplayOnDate/lang_How_it_works");?>:</strong></p>
-			<ul style="margin-left: 20px;">
-				<li><?php echo i18n_r("DisplayOnDate/lang_If_current");?></li>
-				<li><?php echo i18n_r("DisplayOnDate/lang_If_a_template");?></li>
-				<li><?php echo i18n_r("DisplayOnDate/lang_If_no_template");?></li>
-				<li><?php echo i18n_r("DisplayOnDate/lang_Templates_support");?></li>
-			</ul>
+		<div class="displayon-accordion">
+			<div class="displayon-accordion-header" onclick="toggleAccordion(this)">
+				<strong>📖 <?php echo i18n_r("DisplayOnDate/lang_Usage_Instructions");?></strong>
+				<span class="displayon-accordion-icon">▼</span>
+			</div>
+			<div class="displayon-accordion-content">
+				<div class="displayon-accordion-inner">
+							
+						<div class="displayon-usage">
+							
+							<p><strong><?php echo i18n_r("DisplayOnDate/lang_In_page");?>:</strong></p>
+							<pre class="cke">[display-on <span style="font-weight:600">your-block-key</span>]</pre>
+							<br>
+							<p><strong><?php echo i18n_r("DisplayOnDate/lang_In_templates");?>:</strong></p>
+							<pre class="tpl">&lt;?php display_on('<span style="font-weight:600">your-block-key</span>'); ?&gt;</pre>
+							<br>
+							<p><strong><?php echo i18n_r("DisplayOnDate/lang_How_it_works");?>:</strong></p>
+							<ul style="margin-left: 20px;">
+								<li><?php echo i18n_r("DisplayOnDate/lang_If_current");?></li>
+								<li><?php echo i18n_r("DisplayOnDate/lang_If_a_template");?></li>
+								<li><?php echo i18n_r("DisplayOnDate/lang_If_no_template");?></li>
+								<li><?php echo i18n_r("DisplayOnDate/lang_Templates_support");?></li>
+							</ul>
+						</div>
+						<!-- Accordion -->
+						<script>
+						function toggleAccordion(header) {
+							const icon = header.querySelector('.displayon-accordion-icon');
+							const content = header.nextElementSibling;
+							
+							if (content.classList.contains('open')) {
+								content.classList.remove('open');
+								icon.classList.remove('open');
+							} else {
+								content.classList.add('open');
+								icon.classList.add('open');
+							}
+						}
+						</script>
+						
+				</div>
+			</div>
 		</div>
+		
 	</div>
 	
-	<?php
+	<?php 
+	
+	display_footer();
 }
 
 // Sanitize filenames
