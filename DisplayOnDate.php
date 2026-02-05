@@ -2,7 +2,7 @@
 /*
 Plugin Name: Display On Date
 Description: Schedule content blocks to display during specified dates using shortcodes or PHP calls..
-Version: 1.0
+Version: 1.1
 Author: risingisland
 */
 
@@ -17,7 +17,7 @@ i18n_merge('DisplayOnDate') || i18n_merge('DisplayOnDate', 'en_US');
 register_plugin(
 	$DisplayOnDate,
 	i18n_r($DisplayOnDate.'/lang_Menu_Title'),
-	'1.0',
+	'1.1',
 	'risingisland',
 	'https://getsimple-ce.ovh/plugins/',
 	i18n_r($DisplayOnDate.'/lang_Description'),
@@ -61,11 +61,13 @@ function displayon_render($key) {
 	$start = strtotime($block['start']);
 	$end   = strtotime($block['end']);
 
-	// Get the content
-	$content = '';
-	if ($now >= $start && $now <= $end) {
-		$content = html_entity_decode($block['content']);
+	// Check if content should be displayed (within date range)
+	if ($now < $start || $now > $end) {
+		return ''; // Return empty string if outside date range
 	}
+
+	// Get the content
+	$content = html_entity_decode($block['content']);
 
 	// If template exists, use it
 	if (!empty($block['template'])) {
