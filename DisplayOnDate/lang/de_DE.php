@@ -21,6 +21,16 @@ $i18n = [
 	'lang_Start_Time'			=>	'Startdatum/-uhrzeit',
 	'lang_End_Time'				=>	'Enddatum/-uhrzeit',
 	
+	'lang_Days_to_Display'		=> 'An Wochentagen anzeigen',
+	'lang_All_Days'				=> 'Alle Tage',
+	'lang_Mon'					=> 'Mo',
+	'lang_Tue'					=> 'Di',
+	'lang_Wed'					=> 'Mi',
+	'lang_Thu'					=> 'Do',
+	'lang_Fri'					=> 'Fr',
+	'lang_Sat'					=> 'Sa',
+	'lang_Sun'					=> 'So',
+	
 	'lang_Status'				=>	'Status',
 	'lang_Active'				=>	'Aktiv',
 	'lang_Upcoming'				=>	'Bevorstehend',

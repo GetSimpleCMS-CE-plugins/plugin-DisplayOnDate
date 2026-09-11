@@ -21,6 +21,16 @@ $i18n = [
 	'lang_Start_Time'			=>	'Start Date/Time',
 	'lang_End_Time'				=>	'End Date/Time',
 	
+	'lang_Days_to_Display'		=> 'Display on Days',
+	'lang_All_Days'				=> 'All Days',
+	'lang_Mon'					=> 'Mon',
+	'lang_Tue'					=> 'Tue',
+	'lang_Wed'					=> 'Wed',
+	'lang_Thu'					=> 'Thu',
+	'lang_Fri'					=> 'Fri',
+	'lang_Sat'					=> 'Sat',
+	'lang_Sun'					=> 'Sun',
+	
 	'lang_Status'				=>	'Status',
 	'lang_Active'				=>	'Active',
 	'lang_Upcoming'				=>	'Upcoming',

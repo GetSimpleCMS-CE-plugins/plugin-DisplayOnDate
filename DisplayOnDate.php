@@ -2,7 +2,7 @@
 /*
 Plugin Name: Display On Date
 Description: Schedule content blocks to display during specified dates using shortcodes or PHP calls..
-Version: 1.1
+Version: 1.2
 Author: risingisland
 */
 
@@ -17,7 +17,7 @@ i18n_merge('DisplayOnDate') || i18n_merge('DisplayOnDate', 'en_US');
 register_plugin(
 	$DisplayOnDate,
 	i18n_r($DisplayOnDate.'/lang_Menu_Title'),
-	'1.1',
+	'1.2',
 	'risingisland',
 	'https://getsimple-ce.ovh/plugins/',
 	i18n_r($DisplayOnDate.'/lang_Description'),
@@ -66,6 +66,14 @@ function displayon_render($key) {
 		return ''; // Return empty string if outside date range
 	}
 
+	// Check day of the week restriction (1 = Monday, 7 = Sunday)
+	if (isset($block['days']) && is_array($block['days']) && !empty($block['days'])) {
+		$current_dow = (string)date('N');
+		if (!in_array($current_dow, $block['days'])) {
+			return '';
+		}
+	}
+
 	// Get the content
 	$content = html_entity_decode($block['content']);
 
@@ -99,7 +107,7 @@ function display_footer() {
 	</style>
 	<footer id="paypal">
 		<p style="margin:20px 0 0">Made with <span class="credit-icon">❤️</span> especially for "<b><?php global $USR; echo $USR; ?></b>". Is this plugin useful to you?
-		<a href="https://getsimple-ce.ovh/donate" target="_blank" class="donateButton"><b>Buy Us A Coffee </b><svg xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-opacity="0" d="M17 14v4c0 1.66 -1.34 3 -3 3h-6c-1.66 0 -3 -1.34 -3 -3v-4Z"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.5s" values="0;1"/></path><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="48" stroke-dashoffset="48" d="M17 9v9c0 1.66 -1.34 3 -3 3h-6c-1.66 0 -3 -1.34 -3 -3v-9Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="48;0"/></path><path stroke-dasharray="14" stroke-dashoffset="14" d="M17 9h3c0.55 0 1 0.45 1 1v3c0 0.55 -0.45 1 -1 1h-3"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="14;0"/></path><mask id="lineMdCoffeeHalfEmptyFilledLoop0"><path stroke="#fff" d="M8 0c0 2-2 2-2 4s2 2 2 4-2 2-2 4 2 2 2 4M12 0c0 2-2 2-2 4s2 2 2 4-2 2-2 4 2 2 2 4M16 0c0 2-2 2-2 4s2 2 2 4-2 2-2 4 2 2 2 4"><animateMotion calcMode="linear" dur="3s" path="M0 0v-8" repeatCount="indefinite"/></path></mask><rect width="24" height="0" y="7" fill="currentColor" mask="url(#lineMdCoffeeHalfEmptyFilledLoop0)"><animate fill="freeze" attributeName="y" begin="0.8s" dur="0.6s" values="7;2"/><animate fill="freeze" attributeName="height" begin="0.8s" dur="0.6s" values="0;5"/></rect></g></svg></a></p>
+		<a href="https://getsimple-ce.ovh/donate" target="_blank" class="donateButton"><b>Buy Us A Coffee </b><svg xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-opacity="0" d="M17 14v4c0 1.66 -1.34 3 -3 3h-6c-1.66 0 -3 -1.34 -3 -3v-4Z"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.5s" values="0;1"/></path><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="48" stroke-dashoffset="48" d="M17 9v9c0 1.66 -1.34 3 -3 3h-6c-1.66 0 -3 -1.34 -3 -3v-9Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.6s" values="48;0"/></path><path stroke-dasharray="14" stroke-dashoffset="14" d="M17 9h3c0.55 0 1 0.45 1 1v3c0 0.55 -0.45 1 -1 1h-3"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="14;0"/></path><mask id="lineMdCoffeeHalfEmptyFilledLoop0"><path stroke="#fff" d="M8 0c0 2-2 2-2 4s2 2 2 4-2 2-2 4 2 2 2 4M12 0c0 2-2 2-2 4s2 2 2 4-2 2-2 4M16 0c0 2-2 2-2 4s2 2 2 4-2 2-2 4"><animateMotion calcMode="linear" dur="3s" path="M0 0v-8" repeatCount="indefinite"/></path></mask><rect width="24" height="0" y="7" fill="currentColor" mask="url(#lineMdCoffeeHalfEmptyFilledLoop0)"><animate fill="freeze" attributeName="y" begin="0.8s" dur="0.6s" values="7;2"/><animate fill="freeze" attributeName="height" begin="0.8s" dur="0.6s" values="0;5"/></rect></g></svg></a></p>
 	</footer>
 	<?php
 }
@@ -173,6 +181,7 @@ function displayon_admin() {
 		$blocks[$key] = [
 			'start'	=> $start_date . ' ' . $start_time,
 			'end'	  => $end_date . ' ' . $end_time,
+			'days'     => isset($_POST['days']) && is_array($_POST['days']) ? $_POST['days'] : [],
 			'content'  => $_POST['content'],
 			'template' => $_POST['template']
 		];
@@ -484,6 +493,7 @@ function displayon_admin() {
 		$block = $editing && isset($blocks[$editing]) ? $blocks[$editing] : [
 			'start'	=> date('Y-m-d H:i'),
 			'end'	  => date('Y-m-d') . ' 23:59',
+			'days'     => ['1', '2', '3', '4', '5', '6', '7'],
 			'content'  => '',
 			'template' => ''
 		];
@@ -497,6 +507,17 @@ function displayon_admin() {
 		$end_parts = explode(' ', $block['end']);
 		$end_date = $end_parts[0];
 		$end_time = isset($end_parts[1]) ? $end_parts[1] : '23:59';
+		
+		$saved_days = isset($block['days']) && is_array($block['days']) ? $block['days'] : ['1', '2', '3', '4', '5', '6', '7'];
+		$days_map = [
+			'1' => i18n_r('DisplayOnDate/lang_Mon'),
+			'2' => i18n_r('DisplayOnDate/lang_Tue'),
+			'3' => i18n_r('DisplayOnDate/lang_Wed'),
+			'4' => i18n_r('DisplayOnDate/lang_Thu'),
+			'5' => i18n_r('DisplayOnDate/lang_Fri'),
+			'6' => i18n_r('DisplayOnDate/lang_Sat'),
+			'7' => i18n_r('DisplayOnDate/lang_Sun')
+		];
 		
 		?>
 		<div class="displayon-container">
@@ -542,6 +563,23 @@ function displayon_admin() {
 							   placeholder="HH:MM">
 					</div>
 					<small class="displayon-form-hint"><?php echo i18n_r("DisplayOnDate/lang_stop_not_specified");?></small>
+				</div>
+				
+				<div class="displayon-form-group">
+					<label><?php echo i18n_r("DisplayOnDate/lang_Days_to_Display");?>:</label>
+					<div style="margin-top: 6px;">
+						<label style="display:inline-block; margin-right:15px; font-weight:normal; cursor:pointer;">
+							<input type="checkbox" id="displayon_all_days" <?php echo (count($saved_days) === 7) ? 'checked' : ''; ?>>
+							<em><?php echo i18n_r("DisplayOnDate/lang_All_Days");?></em>
+						</label>
+						<?php foreach ($days_map as $day_num => $day_name): ?>
+							<label style="display:inline-block; margin-right:12px; font-weight:normal; cursor:pointer;">
+								<input type="checkbox" class="displayon_day_checkbox" name="days[]" value="<?php echo $day_num; ?>" 
+									   <?php echo in_array((string)$day_num, $saved_days) ? 'checked' : ''; ?>>
+								<?php echo htmlspecialchars($day_name); ?>
+							</label>
+						<?php endforeach; ?>
+					</div>
 				</div>
 				
 				<div class="displayon-form-group">
@@ -683,6 +721,16 @@ function displayon_admin() {
 				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/default.min.css">
 				<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
 				<script>hljs.highlightAll();</script>
+
+				<script>
+				const allDaysCheck = document.getElementById('displayon_all_days');
+				if (allDaysCheck) {
+					allDaysCheck.addEventListener('change', function() {
+						const checkboxes = document.querySelectorAll('.displayon_day_checkbox');
+						checkboxes.forEach(cb => cb.checked = this.checked);
+					});
+				}
+				</script>
 
 			</form>
 		</div>
