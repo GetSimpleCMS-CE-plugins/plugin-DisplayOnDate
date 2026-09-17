@@ -204,12 +204,10 @@ function displayon_admin() {
 	
 	<!-- Add CSS -->
 	<style>
-		#sidebar {
-			display: none!important;
-		}
-		.bodycontent {
-			display: block;
-		}
+		#maincontent {width: 100% !important;}
+		#sidebar {display: none!important;}
+		
+		.bodycontent {display: block;}
 		.displayon-container {
 			background: #fff;
 			padding: 20px;
